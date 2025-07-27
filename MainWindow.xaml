@@ -1,0 +1,191 @@
+<Window x:Class="VNCClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:VNCClient"
+        Title="VNC Remote Desktop" Height="800" Width="1200"
+        MinHeight="600" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource SurfaceBrush}"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- Connection Card Template -->
+        <DataTemplate x:Key="ConnectionCardTemplate">
+            <Border Style="{StaticResource ModernCardStyle}" 
+                    Margin="8" 
+                    Padding="16"
+                    Width="280" 
+                    Height="120"
+                    Cursor="Hand">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" 
+                                  Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                  CommandParameter="{Binding}"/>
+                </Border.InputBindings>
+                
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Header with name and actions -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Text="{Binding DisplayName}" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   TextTrimming="CharacterEllipsis"/>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Content="✏" 
+                                    Width="24" Height="24" 
+                                    FontSize="12"
+                                    Background="Transparent" 
+                                    BorderThickness="0"
+                                    Foreground="{StaticResource TextSecondaryBrush}"
+                                    ToolTip="Edit"
+                                    Command="{Binding DataContext.EditConnectionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"/>
+                            <Button Content="🗑" 
+                                    Width="24" Height="24" 
+                                    FontSize="12"
+                                    Margin="4,0,0,0"
+                                    Background="Transparent" 
+                                    BorderThickness="0"
+                                    Foreground="{StaticResource TextSecondaryBrush}"
+                                    ToolTip="Delete"
+                                    Command="{Binding DataContext.DeleteConnectionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <!-- Connection details -->
+                    <StackPanel Grid.Row="1" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding ConnectionString}" 
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    
+                    <!-- Footer with last connected -->
+                    <TextBlock Grid.Row="2" 
+                               Text="{Binding LastConnectedDisplay}" 
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,8,0,0"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="White" 
+                BorderThickness="0,0,0,1" 
+                BorderBrush="{StaticResource BorderBrush}"
+                Padding="32,24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="VNC Remote Desktop" 
+                               FontSize="28" 
+                               FontWeight="Light"
+                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Connect to your remote computers" 
+                               FontSize="16"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1" 
+                        Content="New Connection" 
+                        Style="{StaticResource ModernButtonStyle}"
+                        Command="{Binding NewConnectionCommand}"/>
+            </Grid>
+        </Border>
+        
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="32,24">
+                
+                <!-- Saved Connections Section -->
+                <TextBlock Text="Saved Connections" 
+                           FontSize="20" 
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           Margin="0,0,0,16"/>
+                
+                <ItemsControl ItemsSource="{Binding SavedConnections}" 
+                              ItemTemplate="{StaticResource ConnectionCardTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                
+                <!-- Empty state for saved connections -->
+                <Border Visibility="{Binding HasSavedConnections, Converter={x:Static local:BooleanToVisibilityConverter.Inverted}}"
+                        Style="{StaticResource ModernCardStyle}"
+                        Padding="32"
+                        Margin="8"
+                        Height="200">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="🖥️" 
+                                   FontSize="48" 
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,16"/>
+                        <TextBlock Text="No saved connections yet" 
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Create your first connection to get started" 
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,4,0,16"/>
+                        <Button Content="New Connection" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding NewConnectionCommand}"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Recent Connections Section -->
+                <TextBlock Text="Recent Connections" 
+                           FontSize="20" 
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           Margin="0,32,0,16"
+                           Visibility="{Binding HasRecentConnections, Converter={x:Static local:BooleanToVisibilityConverter.Default}}"/>
+                
+                <ItemsControl ItemsSource="{Binding RecentConnections}" 
+                              ItemTemplate="{StaticResource ConnectionCardTemplate}"
+                              Visibility="{Binding HasRecentConnections, Converter={x:Static local:BooleanToVisibilityConverter.Default}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
