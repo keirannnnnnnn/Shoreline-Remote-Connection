@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Windows VNC and RDP 1 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Windows VNC and RDP 1 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
