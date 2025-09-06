@@ -1,0 +1,41 @@
+﻿<Window
+    x:Class="VncRdpLauncher.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="VNC &amp; RDP Launcher">
+    <Grid Padding="20" Background="{StaticResource MicaBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Connections"
+                   FontSize="28"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,10"/>
+
+        <ListView x:ConnectionId='2' x:Name="FileList"
+                  Grid.Row="1"
+                  SelectionMode="Single"
+                                                      
+                  CornerRadius="8"
+                  BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                  BorderThickness="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE8B7;" FontSize="20"/>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
+            <Button x:ConnectionId='3' Content="Add File"                      />
+            <Button x:ConnectionId='4' Content="Remove Selected"                         />
+        </StackPanel>
+    </Grid>
+</Window>
+
